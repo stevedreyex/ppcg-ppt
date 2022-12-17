@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <isl/val.h>
 #include <isl/aff.h>
 #include <isl/set.h>
 #include <isl/map.h>
