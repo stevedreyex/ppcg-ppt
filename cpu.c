@@ -671,6 +671,8 @@ static __isl_give isl_schedule_constraints *construct_cpu_schedule_constraints(
 	isl_union_map *validity, *coincidence;
 
 	sc = isl_schedule_constraints_on_domain(isl_union_set_copy(ps->domain));
+	sc = isl_schedule_constraints_set_context(sc,
+				isl_set_copy(ps->context));
 	if (ps->options->live_range_reordering) {
 		sc = isl_schedule_constraints_set_conditional_validity(sc,
 				isl_union_map_copy(ps->tagged_dep_flow),
