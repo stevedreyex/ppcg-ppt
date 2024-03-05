@@ -1,6 +1,6 @@
-[submodule "isl"]
-	path = isl
-	url = git://repo.or.cz/isl.git
 [submodule "pet"]
 	path = pet
 	url = git://repo.or.cz/pet.git
+[submodule "isl"]
+	path = isl
+	url = git@github.com:stevedreyex/isl-ppt.git
