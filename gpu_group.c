@@ -849,6 +849,36 @@ static __isl_give isl_map *shared_access(struct gpu_array_ref_group *group,
 	return isl_map_from_union_map(shared);
 }
 
+/* Save the schedule "schedule" to a file called "filename".
+ * The schedule is printed in block style.
+ */
+static void save_union_map(isl_ctx *ctx, int write, __isl_keep isl_union_map *access,
+	const char *filename)
+{
+	FILE *file;
+	isl_printer *p;
+
+	if (!access)
+		return;
+
+	file = fopen(filename, "a");
+	if (!file) {
+		fprintf(stderr, "Unable to open '%s' for writing\n", filename);
+		return;
+	}
+	p = isl_printer_to_file(ctx, file);
+	// p = isl_printer_set_yaml_style(p, ISL_YAML_STYLE_BLOCK);
+	if (write){
+		p = isl_printer_print_str(p, "write: ");
+	} else {
+		p = isl_printer_print_str(p, "read: ");
+	}
+	p = isl_printer_print_union_map(p, access);
+	p = isl_printer_end_line(p);
+	isl_printer_free(p);
+	fclose(file);
+}
+
 /* Compute the private and/or shared memory tiles for the array
  * reference group "group" of array "array".
  * Return isl_stat_ok on success and isl_stat_error on error.
@@ -953,6 +983,14 @@ static isl_stat compute_group_bounds_core(struct ppcg_kernel *kernel,
 	if (use_shared && no_reuse)
 		coalesced = access_is_coalesced(data, local);
 	isl_union_map_free(local);
+	save_union_map(ctx, group->write, access, kernel->options->save_schedule_file);
+	// isl_printer *p;
+	// p = isl_printer_to_file(ctx, stderr);
+	// p = isl_printer_print_union_map(p, access);
+	// p = isl_printer_print_str(p, "\n");
+	// p = isl_printer_print_str(p, kernel->options->save_schedule_file);
+	// isl_printer_free(p);
+
 
 	if (r >= 0 && kernel->options->debug->verbose &&
 	    use_shared && no_reuse && coalesced)
